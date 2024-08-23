@@ -1,0 +1,26 @@
+Random text line 1:     Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Acct/Pt. 1234-123-4567.1: This is a sample line with some random information following the keyword.
+	Random text line 2: Integer nec odio.    Praesent libero. Sed cursus ante dapibus diam.
+		Random text line 3: Sed nisi. Nulla quis sem at nibh elementum imperdiet.
+
+
+
+UPAL -John Doe: Another sample line with random information after the second keyword.
+   Random text line 4: Duis sagittis ipsum. Praesent mauris. Fusce nec tellus sed augue semper porta.
+
+
+
+
+Acct/Pt. 5678-987-6543.2:    Yet another sample line to test multiple occurrences of the keyword.
+   Random text line 5: Mauris massa. Vestibulum lacinia arcu eget nulla.
+	Random text line 6: Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+UPAL -Jane Smith: More random information to test parsing of the second keyword.
+  Random text line 7: Curabitur sodales ligula in libero.
+
+
+
+
+Acct/Pt. 1357-246-1357.3: One more line to ensure we have sufficient test data.
+    Random text line 8: Sed dignissim lacinia nunc. Curabitur tortor.
+	 Random text line 9: Pellentesque nibh. Aenean quam. In scelerisque sem at dolor.
+   UPAL -Alice Johnson: A final test line with extra spaces and tabs.
