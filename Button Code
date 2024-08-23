@@ -12,7 +12,7 @@ Private Sub CommandButton1_Click()
     Dim firstNameLastName As String
 
     ' Prompt for the file name
-    fileName = InputBox("Enter the name of the text file (with extension):", "File Name")
+    fileName = InputBox("Enter the name of the text file:", "File Name")
     If fileName = "" Then Exit Sub ' If no file name is entered, exit
 
     ' Set the directory path (you can modify this to the directory you want)
