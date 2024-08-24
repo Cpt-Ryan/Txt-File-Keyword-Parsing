@@ -1,4 +1,4 @@
-Private Sub CommandButton1_Click()
+Private Sub CommandButton2_Click()
     Dim fileName As String
     Dim filePath As String
     Dim directoryPath As String
