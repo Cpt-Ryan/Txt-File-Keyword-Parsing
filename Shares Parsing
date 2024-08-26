@@ -40,18 +40,29 @@ Private Sub CommandButton2_Click()
         Line Input #1, textLine
 
         ' Check if the line contains "Shares"
-        If InStr(textLine, "Shares") > 0 Then
-            ' Store everything to the right of "Shares" as the lastShares value
-            lastShares = Trim(Mid(textLine, InStr(textLine, "Shares") + Len("Shares")))
-        
+        If InStr(1, textLine, "Shares", vbTextCompare) > 0 Then
+            ' Find the position of "Shares" and extract everything after it
+            Dim sharesPosition As Integer
+            sharesPosition = InStr(1, textLine, "Shares", vbTextCompare)
+
+            ' Extract everything after "Shares", considering multiple spaces
+            lastShares = Trim(Mid(textLine, sharesPosition + Len("Shares")))
+        End If
+
         ' Check if the line contains "Confidential"
-        ElseIf Trim(textLine) = "Confidential" Then
+        If InStr(1, Trim(textLine), "Confidential", vbTextCompare) > 0 Then
             ' If "Confidential" is found, write the last "Shares" value to Excel in Column C
             If lastShares <> "" Then
-                ws.Cells(nextRowC, 3).Value = lastShares
+                ' Convert lastShares to number if needed
+                If IsNumeric(Replace(lastShares, ",", "")) Then
+                    ws.Cells(nextRowC, 3).Value = CDbl(Replace(lastShares, ",", "")) ' Convert to Double to write as a number
+                Else
+                    ws.Cells(nextRowC, 3).Value = lastShares ' Write as is if not a number
+                End If
+
                 nextRowC = nextRowC + 1
             End If
-            ' Reset lastShares after writing to Excel
+            ' Reset lastShares after writing to Excel to ensure the next "Confidential" gets a new set
             lastShares = ""
         End If
     Loop
@@ -59,5 +70,10 @@ Private Sub CommandButton2_Click()
     ' Close the text file
     Close #1
 
-    MsgBox "Processing complete. The last 'Shares' values before each 'Confidential' entry have been recorded in Column C."
+    ' Format Column C as Currency ($)
+    If nextRowC > 2 Then
+        ws.Range(ws.Cells(2, 3), ws.Cells(nextRowC - 1, 3)).NumberFormat = "$#,##0.00"
+    End If
+
+    MsgBox "Processing complete. The last 'Shares' values before each 'Confidential' entry have been recorded in Column C and formatted as currency."
 End Sub
