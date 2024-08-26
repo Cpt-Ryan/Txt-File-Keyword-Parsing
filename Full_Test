@@ -1,25 +1,25 @@
-Acct/Pt.  1234-5678-9012   UPAL -John Doe  Marketing Dept.
+Acct/Pt.  1234-5678-9012.1234   UPAL -John Doe  Marketing Dept.
 Random Text 54.562 Shares								15,562
-Random Text 785.562 Shares                                                          12,345
+Random Text 785.56254165116 Shares                                                          12,345
 Confidential
 
 
-Acct/Pt.  9876-5432-1098   Alice Johnson
+Acct/Pt.  9876-5432-1098.1234   Alice Johnson
 Random Text  6523 Shares           6,789
 Confidential
 
-Acct/Pt.  1122-3344-5566  Michael Brown HR Dept.
+Acct/Pt.  1122-3344-5566.4567  Michael Brown HR Dept.
 Some other text here
-Random Text 56.562 Shares                                	124,456
-Random Text 45.562 Shares					12,123
-Random Text 65.562 Shares					500,000
+Random Text 56.56256221564 Shares                                	124,456
+Random Text 45.56215641651 Shares					12,123
+Random Text 65.562164651561 Shares					500,000
 Confidential
 
 
-Acct/Pt.  2233-4455-6677   UPAL -George Clark Legal Team
-Random Text 56.562 Shares   				56,000 
-Random Text 56.562 Shares					24,360
-Random Text 60.562 Shares					45,234
+Acct/Pt.  2233-4455-6677.6789   UPAL -George Clark Legal Team
+Random Text 56.562165416151 Shares   				56,000 
+Random Text 56.5621561464156 Shares					24,360
+Random Text 60.562254515641879 Shares					45,234
 Confidential
 
 More irrelevant text here
