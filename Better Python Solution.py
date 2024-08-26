@@ -27,16 +27,28 @@ def read_and_process_file():
             
             # Check for "Acct/Pt."
             if "Acct/Pt." in line:
-                acct_pt_value = line.split("Acct/Pt.")[1][:16].strip()
+                # Split the line at "Acct/Pt." and get everything after it
+                after_acct = line.split("Acct/Pt.")[1]
+                
+                # Extract the part immediately following "Acct/Pt."
+                after_acct_parts = after_acct.strip().split()
+                acct_pt_value = ""
+                
+                # Find the first part that is a valid number (digits, with optional hyphens or periods)
+                for part in after_acct_parts:
+                    if part.replace("-", "").replace(".", "").isdigit():  # Handles numbers with hyphens or periods
+                        acct_pt_value = part
+                        break
+                
                 acct_pt.append(acct_pt_value)
                 
                 # Check if "UPAL -" is in the same line
                 if "UPAL -" in line:
-                    name_value = line.split("Acct/Pt.")[1].split("UPAL -")[1].strip()
+                    name_value = after_acct.split("UPAL -")[1].strip()
                     name_value = "UPAL -" + name_value  # Include "UPAL -" in the name
                 else:
-                    # Extract potential name after "Acct/Pt."
-                    name_value = line.split("Acct/Pt.")[1][16:].strip()
+                    # Extract potential name after the account number
+                    name_value = " ".join(after_acct_parts[1:]).strip()  # Take all parts after the number
 
                     # If extracted value contains any digits, consider it invalid
                     if any(char.isdigit() for char in name_value):
@@ -46,11 +58,17 @@ def read_and_process_file():
 
             # Check for "Shares"
             elif "Shares" in line:
+                # Find the position of "Shares" and extract everything before it
                 shares_position = line.find("Shares")
-                potential_shares_value = line[:shares_position].strip().split()[-1]  # Get the last word before "Shares"
                 
-                if potential_shares_value.replace(".", "", 1).isdigit():
-                    last_shares_value = potential_shares_value  # Store last numeric value before "Shares"
+                # Extract the part immediately before "Shares"
+                before_shares = line[:shares_position].strip().split()
+                
+                # Check if the last part before "Shares" is a valid number
+                if before_shares:
+                    potential_shares_value = before_shares[-1]
+                    if potential_shares_value.replace(",", "").replace(".", "", 1).isdigit():
+                        last_shares_value = potential_shares_value  # Store last numeric value before "Shares"
 
             # Check for "Confidential"
             elif "Confidential" in line:
