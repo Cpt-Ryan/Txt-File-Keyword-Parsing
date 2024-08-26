@@ -1,0 +1,145 @@
+Private Sub CommandButton3_Click()
+    Dim fileName As String
+    Dim filePath As String
+    Dim directoryPath As String
+    Dim textLine As String
+    Dim keyword1 As String, keyword2 As String
+    Dim charCount1 As Integer
+    Dim position1 As Integer, position2 As Integer
+    Dim lastShares As String
+    Dim ws As Worksheet
+    Dim nextRowA As Long, nextRowB As Long, nextRowC As Long
+    Dim wordsArray() As String
+    Dim firstNameLastName As String
+    Dim remainingText As String
+    Dim sharesPosition As Integer
+    Dim i As Integer
+
+    ' Prompt for the file name
+    fileName = InputBox("Enter the name of the text file:", "File Name")
+    If fileName = "" Then Exit Sub ' If no file name is entered, exit
+
+    ' Set the directory path (you can modify this to the directory you want)
+    directoryPath = "C:\Users\jbennett\Desktop\Test\" ' Replace with your directory path
+
+    ' Construct the full file path
+    filePath = directoryPath & fileName & ".txt"
+
+    ' Check if the file exists
+    If Dir(filePath) = "" Then
+        MsgBox "File not found. Please check the file name and try again.", vbExclamation
+        Exit Sub
+    End If
+
+    ' Set the worksheet to place data
+    Set ws = ThisWorkbook.Sheets("Sheet1")
+
+    ' Find the first empty rows in columns A, B, and C
+    nextRowA = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row + 1
+    nextRowB = ws.Cells(ws.Rows.Count, 2).End(xlUp).Row + 1
+    nextRowC = ws.Cells(ws.Rows.Count, 3).End(xlUp).Row + 1
+
+    ' Set the keywords and character count to search for
+    keyword1 = "Acct/Pt."
+    charCount1 = 16
+    keyword2 = "UPAL -"
+
+    ' Open the text file
+    Open filePath For Input As #1
+
+    ' Initialize lastShares as an empty string
+    lastShares = ""
+
+    ' Read through the text file line by line
+    Do Until EOF(1)
+        Line Input #1, textLine
+
+        ' --- Section for processing Acct/Pt. and UPAL - Keywords ---
+        
+        ' Search for all instances of the first keyword in the line
+        position1 = 1
+        Do While position1 > 0
+            position1 = InStr(position1, textLine, keyword1)
+            If position1 > 0 Then
+                ws.Cells(nextRowA, 1).Value = Mid(textLine, position1 + Len(keyword1), charCount1)
+                nextRowA = nextRowA + 1
+
+                ' Check for Keyword 2 in the same line after finding Keyword 1
+                position2 = InStr(position1 + Len(keyword1), textLine, keyword2)
+                If position2 > 0 Then
+                    ' If Keyword 2 is found, skip further processing for this line
+                Else
+                    ' If Keyword 2 is not found, copy the rest of the line (after the first keyword1 and the 16 characters) to Column B
+                    remainingText = Mid(textLine, position1 + Len(keyword1) + charCount1)
+                    ws.Cells(nextRowB, 2).Value = Trim(remainingText)
+                    nextRowB = nextRowB + 1
+                End If
+                ' Update position1 to search for the next occurrence of Keyword 1
+                position1 = position1 + Len(keyword1) + charCount1
+            End If
+        Loop
+
+        ' Search for all instances of the second keyword in the line
+        position2 = 1
+        Do While position2 > 0
+            position2 = InStr(position2, textLine, keyword2)
+            If position2 > 0 Then
+                ' Extract the text after the keyword
+                remainingText = Mid(textLine, position2 + Len(keyword2))
+                remainingText = Trim(remainingText)
+
+                ' Split the remaining text into words and concatenate all words
+                wordsArray = Split(remainingText, " ")
+
+                firstNameLastName = wordsArray(0)
+                For i = 1 To UBound(wordsArray)
+                    firstNameLastName = firstNameLastName & " " & wordsArray(i)
+                Next i
+
+                ws.Cells(nextRowB, 2).Value = firstNameLastName
+
+                nextRowB = nextRowB + 1
+                position2 = position2 + Len(keyword2) + Len(firstNameLastName) ' Move position to continue search
+            End If
+        Loop
+
+        ' --- Section for processing Shares and Confidential Keywords ---
+
+        ' Check if the line contains "Shares"
+        If InStr(1, textLine, "Shares", vbTextCompare) > 0 Then
+            ' Find the position of "Shares" and extract everything after it
+            sharesPosition = InStr(1, textLine, "Shares", vbTextCompare)
+
+            ' Extract everything after "Shares", considering multiple spaces
+            lastShares = Trim(Mid(textLine, sharesPosition + Len("Shares")))
+        End If
+
+        ' Check if the line contains "Confidential"
+        If InStr(1, Trim(textLine), "Confidential", vbTextCompare) > 0 Then
+            ' If "Confidential" is found, write the last "Shares" value to Excel in Column C
+            If lastShares <> "" Then
+                ' Convert lastShares to number if needed
+                If IsNumeric(Replace(lastShares, ",", "")) Then
+                    ws.Cells(nextRowC, 3).Value = CDbl(Replace(lastShares, ",", "")) ' Convert to Double to write as a number
+                Else
+                    ws.Cells(nextRowC, 3).Value = lastShares ' Write as is if not a number
+                End If
+
+                nextRowC = nextRowC + 1
+            End If
+            ' Reset lastShares after writing to Excel to ensure the next "Confidential" gets a new set
+            lastShares = ""
+        End If
+
+    Loop
+
+    ' Close the text file
+    Close #1
+
+    ' Format Column C as Currency ($)
+    If nextRowC > 2 Then
+        ws.Range(ws.Cells(2, 3), ws.Cells(nextRowC - 1, 3)).NumberFormat = "$#,##0.00"
+    End If
+
+    MsgBox "Processing complete. Data has been recorded in Columns A, B, and C, and formatted as required."
+End Sub
